@@ -1,0 +1,327 @@
+.body {
+  position: absolute;
+  width: 100%;
+  min-height: 100%;
+}
+.left-pannel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  overflow: hidden;
+  min-height: 100%;
+  background: #222d32;
+  z-index: 2;
+  box-shadow: 0px 0px 3px 1px #d1d1d1;
+}
+.rsb-heading {
+  position: relative;
+  margin: auto;
+  top: 0;
+  left: 0;
+  background: #FFFFFF;
+  color: white;
+  font-weight: 900;
+  font-family: Consolas,"Andale Mono WT","Andale Mono","Lucida Console", "Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono", "Liberation Mono","Nimbus Mono L",Monaco, "Courier New",Courier,monospace;
+  font-size: .9em;
+  height: 70px;
+  width: 100%;
+  text-align: center;
+}
+.rsm-heading {
+  position: absolute;
+  margin: auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  color: #1b222c;
+  font-weight: 900;
+  font-family: Consolas,"Andale Mono WT","Andale Mono","Lucida Console", "Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono", "Liberation Mono","Nimbus Mono L",Monaco, "Courier New",Courier,monospace;
+  font-size: .9em;
+  width: 90%;
+  /* text-align: center; */
+  /* border: 4px solid #1b222c; */
+}
+.manual-lfn {
+  position: absolute;
+  margin: auto;
+  top: 0;
+  bottom: 20px;
+  left: 0px;
+  right: 0;
+  height: 23px;
+  font-size: 13px;
+  /* background: yellow; */
+  color: inherit;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  font-family: calibri;
+  text-align: center;
+}
+.bot-manual-lfn {
+  top: 28px;
+  font-size: 16px;
+  font-family: calibri;
+}
+.rsb-menu {
+  position: relative;
+  margin: auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  color: #FFFFFF;
+  font-family:Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  text-align: left;
+  display: block;
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+}
+.rsb-menu:hover {
+  color: #ffffff;
+  background: rgba(0,0,0,.5);
+}
+.rsb-menu:hover:before {
+  position: absolute;
+  content: '';
+  margin: auto;
+  right: 10px;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 10px solid #ffffff;
+  -webkit-transition:All .4s ease;
+  -moz-transition:All .4s ease;
+  -o-transition:All .4s ease;
+  transition: All .4s ease;
+}
+.hovered_bcolor {
+  color: #ffffff;
+  background: rgba(0,0,0,.5);
+}
+.hovered_bcolor:before {
+  position: absolute;
+  content: '';
+  margin: auto;
+  right: 10px;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 10px solid #ffffff;
+  -webkit-transition:All .4s ease;
+  -moz-transition:All .4s ease;
+  -o-transition:All .4s ease;
+  transition: All .4s ease;
+}
+.wrapper {
+  margin-left: 300px;
+  min-height: 100%;
+  display: block;
+}
+.inner-wrapper {
+  padding: 1.5em 3em;
+  position: relative;
+  margin: auto;
+}
+.head-nav {
+  font-family:Arial, Helvetica, sans-serif;
+  color: #222d32;
+  z-index: 2;
+  font-size: 14px;
+  font-weight: 600;
+}
+.ftg {
+    /* height: 135px; */
+    width: 40%;
+}
+.ftg1 {
+    height: 210px;
+    width: 40%;
+}
+.btn-wrapper {
+    display: inline-table;
+    /* background: yellow; */
+    /* position: absolute; */
+    margin: auto;
+    left: 0;
+    right: 0;
+    width: 100%;
+    /* height: 50px; */
+    top: 0;
+    bottom: 0;
+}
+.fbw {
+    position: relative;
+}
+.btn-wrapper button {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    margin: 10px;
+    cursor: pointer;
+    width: 200px;
+}
+.p {
+    background-color: tomato;
+    color: white;
+}
+.d {
+    background-color:forestgreen;
+    color: white;
+}
+td, th {
+    font-size: 14px;
+    /* font-weight: 600; */
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 5px 10px;
+}
+a {
+    text-decoration: none;
+    color: rgb(13, 107, 151);
+}
+.error {
+    color: red;
+    font-size: 12px;
+    font-weight: 500;
+}
+.success {
+    color: green;
+    /* font-size: 12px; */
+    font-weight: 500;
+}
+.hl {
+    padding: 10px;
+    background-color: rgba(255,255,255,.8);
+    position: relative;
+    margin: auto;
+    top: 10px;
+    left: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: rgb(37, 37, 37);
+    display: inline-table;
+}
+.hl:hover {
+    background-color: rgba(255,255,255,1);
+}
+
+/* Customize the label (the container) */
+.container {
+    /* display: inline-table; */
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Hide the browser's default checkbox */
+  .container input {
+    display: inline-table;
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  /* Create a custom checkbox */
+  .checkmark {
+    display: inline-table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 15px;
+    width: 15px;
+    background-color: rgb(168, 168, 168);
+    border: 2px solid rgb(51, 51, 51);
+  }
+  
+  /* On mouse-over, add a grey background color */
+  .container:hover input ~ .checkmark {
+    background-color: rgb(51, 51, 51);
+  }
+  
+  /* When the checkbox is checked, add a blue background */
+  .container input:checked ~ .checkmark {
+    background-color: rgb(51, 51, 51);
+  }
+  
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  /* Show the checkmark when checked */
+  .container input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  /* Style the checkmark/indicator */
+  .container .checkmark:after {
+    left: 5px;
+    top: 1px;
+    width: 4px;
+    height: 7px;
+    border: solid rgb(255, 255, 255);
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+
+  input[type=text], input[type=password], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  input[type=submit] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  input[type=submit]:hover {
+    background-color: #45a049;
+  }
+.wfc {
+    color: white;
+}
+
+.link {
+    text-decoration: none;
+    color: black;
+}
+.pow {
+  font-size:8px;
+  font-weight:600;
+}
