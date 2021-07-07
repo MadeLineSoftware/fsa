@@ -12,7 +12,7 @@ class klasifikasi extends Model
 
     public function check_username($un = '')
     {
-        return DB::table('wali')
+        return DB::table('users')
                 ->select(DB::raw(
                     "COUNT(*) as total"
                 ))
@@ -22,9 +22,43 @@ class klasifikasi extends Model
                 ->first();
     }
 
+    public function quiz()
+    {
+        return DB::table('quiz')->get();
+    }
+
+    public function get_quiz($uid, $qid)
+    {
+        return DB::table('test_quiz')
+                ->where([
+                    ['user_id', $uid],
+                    ['id_quiz', $qid]
+                ])
+                ->first();
+    }
+
+    public function one_quiz($qid)
+    {
+        return DB::table('pertanyaan')
+                ->where([
+                    ['id_quiz', $qid]
+                ])
+                ->get();
+    }
+
+    public function get_jawab($pid, $uid)
+    {
+        return DB::table('test_quiz')
+                ->where([
+                    ['user_id', $uid],
+                    ['id_pertanyaan', $pid]
+                ])
+                ->first();
+    }
+
     public function satu_wali($un = '')
     {
-        return DB::table('wali')
+        return DB::table('users')
                 ->where([
                     ['username', $un]
                 ])
@@ -33,7 +67,7 @@ class klasifikasi extends Model
 
     public function validate_login($un = '', $pass = '')
     {
-        return DB::table('wali')
+        return DB::table('users')
                 ->select(DB::raw(
                     "COUNT(*) as total"
                 ))
@@ -117,61 +151,4 @@ class klasifikasi extends Model
                 ])
                 ->first();
     }
-
-
-
-
-    
-    // public function count_dataset($id)
-    // {
-    //     return DB::table('dataset')
-    //             ->select(DB::raw(
-    //                 "COUNT(*) as total"
-    //             ))
-    //             ->where([
-    //                 ['id', $id]
-    //             ])->first();
-    // }
-    
-    // public function one_dataset($id)
-    // {
-    //     return DB::table('dataset')
-    //             ->where([
-    //                 ['id', $id]
-    //             ])->first();
-    // }
-
-    // public function data_training()
-    // {
-    //     return DB::table('data_training')->get();
-    // }
-
-    // public function sort_data_training()
-    // {
-    //     return DB::table('data_training')->orderBy('total')->get();
-    // }
-
-    // public function hasil_uji($k = '')
-    // {
-    //     return DB::table('data_training')->orderBy('total')->take($k)->get();
-    // }
-    
-    // public function count_data_training($id)
-    // {
-    //     return DB::table('data_training')
-    //             ->select(DB::raw(
-    //                 "COUNT(*) as total"
-    //             ))
-    //             ->where([
-    //                 ['id', $id]
-    //             ])->first();
-    // }
-    
-    // public function one_data_training($id)
-    // {
-    //     return DB::table('data_training')
-    //             ->where([
-    //                 ['id', $id]
-    //             ])->first();
-    // }
 }

@@ -28,6 +28,13 @@ Route::match(array('GET', 'POST'), 'diagnosa/{id}', [HomeController::class, 'dia
 Route::match(array('GET', 'POST'), 'buat_diagnosa/{id}', [HomeController::class, 'buat_diagnosa']);
 Route::match(array('GET', 'POST'), 'hasil_diagnosa/{id}', [HomeController::class, 'hasil_diagnosa']);
 
+
+Route::match(array('GET', 'POST'), 'admin', [HomeController::class, 'admin']);
+Route::match(array('GET', 'POST'), 'buat_pertanyaan', [HomeController::class, 'buat_pertanyaan']);
+Route::match(array('GET', 'POST'), 'quiz/{id}', [HomeController::class, 'quiz']);
+Route::match(array('GET', 'POST'), 'buat_quiz/{id}', [HomeController::class, 'buat_quiz']);
+Route::match(array('GET', 'POST'), 'sertifikat', [HomeController::class, 'sertifikat']);
+
 Route::get('jenis_kk', [HomeController::class, 'jenis_kk']);
 Route::match(array('GET', 'POST'), 'tambah_jkk', [HomeController::class, 'tambah_jkk']);
 Route::match(array('GET', 'POST'), 'hapus_jkk/{id}', [HomeController::class, 'hapus_jkk']);

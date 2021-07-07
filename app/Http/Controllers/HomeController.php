@@ -17,27 +17,97 @@ class HomeController extends Controller
         {
             $klasifikasi     = new klasifikasi();
             $data['dataset'] = $klasifikasi->dataset(session('uid'));
+            $data['quiz']   = $klasifikasi->quiz();
+            $data['english']    = $klasifikasi->get_quiz(session('uid'), 1);
+            $data['matematika']    = $klasifikasi->get_quiz(session('uid'), 2);
+            $data['bahasa']    = $klasifikasi->get_quiz(session('uid'), 3);
+            $data['ipa']    = $klasifikasi->get_quiz(session('uid'), 4);
 
             return view('home', $data);
         }
         
         return view('login');
     }
+    
 
-    public function diagnosa(Request $request)
+    public function admin(Request $request)
     {
-        if(!session('loged_in'))
-        {
-            return view('login');
-        }
+        $klasifikasi    = new klasifikasi();
+
+        $data['quiz']   = $klasifikasi->quiz();
+        return view('admin', $data);
+    }
+
+    public function buat_pertanyaan(Request $request)
+    {
+        // validate the form
+        $validation = $request->validate([
+            'quiz'  => 'required',
+            'pertanyaan'  => 'required',
+            'a'  => 'required',
+            'b'  => 'required',
+            'c'  => 'required',
+            'd'  => 'required',
+            'jawaban'  => 'required'
+        ]);
         
+        $pilihan    = 'a '.ucwords($request->a).'||b '.ucwords($request->b).'||c '.ucwords($request->c).'||d '.ucwords($request->d);
+        DB::table('pertanyaan')->insert([
+            'pertanyaan'    => ucwords($request->pertanyaan),
+            'pilihan'    => $pilihan,
+            'jawaban'    => $request->jawaban,
+            'id_quiz'  => $request->quiz,
+        ]);
+        
+        return redirect(url('admin'))->with(['success' => 'Berhasil tambah pertanyaan.']);
+    }
+
+    public function quiz(Request $request)
+    {
+        $klasifikasi = new klasifikasi();
+        $id = $request->segment(2);
+        $data['data']   = $klasifikasi->one_quiz($id);
+        $data['quiz']   = $klasifikasi->quiz();
+        $data['id_quiz']   = $id;
+        $data['test']    = $klasifikasi->get_quiz(session('uid'), $id);
+        return view('quiz', $data);
+    }
+
+    public function buat_quiz(Request $request)
+    {
         $klasifikasi = new klasifikasi();
         $id = $request->segment(2);
         
-        $data['diagnosa'] = $klasifikasi->diagnosa();
-        $data['id'] = $id;
-        $data['one_diagnosa'] = $klasifikasi->one_hasil_diagnosa($id);
-        return view('diagnosa', $data);
+        $selected = 0;
+        $data   = $klasifikasi->one_quiz($id);
+        foreach($data as $row)
+        {
+            if(!isset($_POST[$row->id_pertanyaan]))
+            {
+                $selected += 1;
+            }
+        }
+
+        if($selected > 0)
+        {
+            return redirect(url('quiz/'.$request->segment(2)))->with(['error' => 'Semua pertanyaan harus dijawab.']);
+        }
+        
+        foreach($data as $row)
+        {
+            $jawaban = $row->jawaban;
+                $id_pertanyaan = $row->id_pertanyaan;
+                DB::table('test_quiz')
+                    ->insert([
+                        'user_id' => session('uid'),
+                        'id_pertanyaan' => $row->id_pertanyaan,
+                        'id_quiz' => $id,
+                        // 'benar' => $benar,
+                        'jawaban' => explode('|', $request->$id_pertanyaan)[1]
+                    ]);
+        }
+
+        return redirect(url('/quiz/'.$id))->with(['success' => 'Berhasil melakukan test.']);
     }
 
     public function do_login(Request $request)
@@ -63,7 +133,7 @@ class HomeController extends Controller
 
         $request->session()->put('loged_in', true);
         $request->session()->put('uid', $row->id);
-        $request->session()->put('nama', $row->wali);
+        $request->session()->put('nama', $row->nama);
 
         // redirect to change pasword after pasword reset
         return redirect(url('/'));
@@ -123,212 +193,95 @@ class HomeController extends Controller
         return redirect(url('/'));
     }
 
-    public function tambah_anak(Request $request)
-    {
-        // validate the form
-        $validation = $request->validate([
-            'nama'  => 'required',
-            'jenis_kelamin'    => 'required'
-        ]);
-
-        // masukan data
-        DB::table('anak')->insert([
-            'nama'  => ucwords($request->nama),
-            'jenis_kelamin'    => $request->jenis_kelamin,
-            'id_wali'    => session('uid')
-        ]);
-
-        // masukan data
-        DB::table('hasil_diagnosa')->insert([
-            'id_anak'  => DB::getPdo()->lastInsertId()
-        ]);
-
-        return redirect(url('/'))->with(['success' => 'Berhasil menambahkan dataset.']);
-    }
-
-    public function hapus_anak(Request $request)
+    public function sertifikat()
     {
         $klasifikasi = new klasifikasi();
-        $id = $request->segment(2);
-        
-        $row = $klasifikasi->count_anak($id);
-        if($row->total > 0)
-        {
-            DB::table('anak')->where('id', $id)->delete();
-            return redirect(url('/'))->with(['success' => 'Berhasil hapus data training.']);
-        }
-        else
-        {
-            return redirect(url('/'))->with(['error' => 'ID data training tidak ditemukan.']);
-        }
-    }
+        $uid = session('uid');
+        $data['quiz']   = $klasifikasi->quiz();
 
-    public function buat_diagnosa(Request $request)
-    {
-        $klasifikasi = new klasifikasi();
-        $result      = $klasifikasi->diagnosa();
-
-        $selected   = 0;
-        $sel_index  = '';
-        $sel_nama   = '';
-
-        // validate the form
-        foreach($result as $row)
+        $english = $klasifikasi->one_quiz(1);
+        $ebanar = 0;
+        $esalah = 0;
+        foreach($english as $row)
         {
-            if(isset($_POST[$row->code_diagnosa]))
+            $dat = $klasifikasi->get_jawab($row->id_pertanyaan, session('uid'));
+            $ujawab = $dat->jawaban;
+            if($row->jawaban === $ujawab)
             {
-                $selected += 1;
-                $sel_index .= $row->code_diagnosa.',';
-                $sel_nama .= $row->diagnosa.'| ';
+                $ebanar += 1;
+            }
+            else
+            {
+                $esalah += 1;
             }
         }
 
-        if($selected < 1)
+        $data['b_english']    = $ebanar;
+        $data['s_english']    = $esalah;
+
+        $mate = $klasifikasi->one_quiz(2);
+        $ebanar = 0;
+        $esalah = 0;
+        foreach($mate as $row)
         {
-            return redirect(url('diagnosa/'.$request->segment(2)))->with(['error' => 'Harus memilih salah satuh diagnosa.']);
-        }
-
-        // insert new youtubes account
-        DB::table('hasil_diagnosa')
-            ->where('id_anak', $request->segment(2))
-            ->update([
-                'code_diagnosa' => rtrim($sel_index, ', '),
-                'nama_diagnosa' => rtrim($sel_nama, '| ')
-            ]);
-
-        return redirect(url('/'))->with(['success' => 'Berhasil melakukan diagnosa.']);
-    }
-
-    public function hasil_diagnosa(Request $request)
-    {
-        $klasifikasi = new klasifikasi();
-        $id = $request->segment(2);
-
-        $row    = $klasifikasi->one_hasil_diagnosa($id);
-        if(!$row)
-        {
-            exit('Data dignosa tidak ditemukan. Silahkan tekan tombol kembali.');
-        }
-
-        $kebutuhan_kusus = $klasifikasi->kebutuhan_kusus();
-        foreach($kebutuhan_kusus as $row)
-        {
-            ${'array_'.$row->code}  = $this->get_penyakit($row->code);
-            ${'total_'.$row->code}  = 0;
-        }
-        
-        $hasil = $klasifikasi->one_hasil_diagnosa($id);
-        $sel_index  = explode(',', $hasil->code_diagnosa);
-        foreach($sel_index as $val)
-        {
-            foreach($kebutuhan_kusus as $row)
+            $dat = $klasifikasi->get_jawab($row->id_pertanyaan, session('uid'));
+            $ujawab = $dat->jawaban;
+            if($row->jawaban === $ujawab)
             {
-                if(in_array($val, ${'array_'.$row->code}))
-                {
-                    ${'total_'.$row->code} += 1;
-                }
+                $ebanar += 1;
+            }
+            else
+            {
+                $esalah += 1;
             }
         }
 
-        // echo $total_P002;
-        
-        $list_jumlah    = array();
-        $list_nama      = array();
-        $list_np      = array();
-        
-        foreach($kebutuhan_kusus as $row)
+        $data['b_mate']    = $ebanar;
+        $data['s_mate']    = $esalah;
+
+        $bahasa = $klasifikasi->one_quiz(3);
+        $ebanar = 0;
+        $esalah = 0;
+        foreach($bahasa as $row)
         {
-            array_push($list_jumlah, ${'total_'.$row->code});
-            array_push($list_nama, $row->code);
-            array_push($list_np, $row->jenis_kebutuhan);
+            $dat = $klasifikasi->get_jawab($row->id_pertanyaan, session('uid'));
+            $ujawab = $dat->jawaban;
+            if($row->jawaban === $ujawab)
+            {
+                $ebanar += 1;
+            }
+            else
+            {
+                $esalah += 1;
+            }
         }
 
-        $data['list_jumlah'] = $list_jumlah;
-        $data['list_nama'] = $list_nama;
-        $data['list_np'] = $list_np;
-        $data['nama_anak'] = $klasifikasi->satu_anak($id);
-        return view('hasil_diagnosa', $data);
-    }
+        $data['b_bahasa']    = $ebanar;
+        $data['s_bahasa']    = $esalah;
 
-    protected function get_penyakit($penyakit)
-    {
-        $klasifikasi    = new klasifikasi();
-        $list           = array();
-        $pilek          = $klasifikasi->one_diagnosa1($penyakit);
-        foreach($pilek as $row)
+        $ipa = $klasifikasi->one_quiz(4);
+        $ebanar = 0;
+        $esalah = 0;
+        foreach($ipa as $row)
         {
-            array_push($list, $row->code_diagnosa);
+            $dat = $klasifikasi->get_jawab($row->id_pertanyaan, session('uid'));
+            $ujawab = $dat->jawaban;
+            if($row->jawaban === $ujawab)
+            {
+                $ebanar += 1;
+            }
+            else
+            {
+                $esalah += 1;
+            }
         }
 
-        return $list;
-    }
-    
-    public function jenis_kk()
-    {
-        $klasifikasi     = new klasifikasi();
-        $data['kebutuhan_kusus'] = $klasifikasi->kebutuhan_kusus();
-        return view('jenis_kk', $data);
-    }
+        $data['b_ipa']    = $ebanar;
+        $data['s_ipa']    = $esalah;
 
-    public function tambah_jkk(Request $request)
-    {
-        // validate the form
-        $validation = $request->validate([
-            'code'  => 'required',
-            'jenis_kebutuhan'    => 'required'
-        ]);
-
-        // masukan data
-        DB::table('kebutuhan_kusus')->insert([
-            'code'  => ucwords($request->code),
-            'jenis_kebutuhan'    => $request->jenis_kebutuhan
-        ]);
-
-        return redirect(url('jenis_kk'))->with(['success' => 'Berhasil menambahkan kebutuhan kusus.']);
-    }
-
-    public function hapus_jkk(Request $request)
-    {
-        $klasifikasi = new klasifikasi();
-        $id = $request->segment(2);
         
-        DB::table('kebutuhan_kusus')->where('id', $id)->delete();
-        return redirect(url('jenis_kk'))->with(['success' => 'Berhasil hapus data kebutuhan kusus.']);
-    }
-    
-    public function jenis_diagnosa()
-    {
-        $klasifikasi     = new klasifikasi();
-        $data['jenis_diagnosa'] = $klasifikasi->jenis_diagnosa();
-        $data['kebutuhan_kusus'] = $klasifikasi->kebutuhan_kusus();
-        return view('jenis_diagnosa', $data);
-    }
 
-    public function tambah_diagnosa(Request $request)
-    {
-        // validate the form
-        $validation = $request->validate([
-            'code'  => 'required',
-            'jenis_kebutuhan'    => 'required',
-            'diagnosa'    => 'required'
-        ]);
 
-        // masukan data
-        DB::table('diagnosa')->insert([
-            'code_diagnosa'  => ucwords($request->code),
-            'code_kebutuhan'    => $request->jenis_kebutuhan,
-            'diagnosa'    => $request->diagnosa
-        ]);
-
-        return redirect(url('jenis_diagnosa'))->with(['success' => 'Berhasil menambahkan diagnosa.']);
-    }
-
-    public function hapus_diagnosa(Request $request)
-    {
-        $klasifikasi = new klasifikasi();
-        $id = $request->segment(2);
-        
-        DB::table('diagnosa')->where('id', $id)->delete();
-        return redirect(url('jenis_diagnosa'))->with(['success' => 'Berhasil hapus data diagnosa.']);
+        return view('sertifikat', $data);
     }
 }

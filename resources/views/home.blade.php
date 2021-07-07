@@ -15,16 +15,21 @@
       <div class="rsb-heading">
         <div class="rsm-heading">
           <div class="manual-lfn">
-            DIAGNOSA ANAK BERKEBUTUHAN KHUSUS
+            IMPLEMENTASI FINITE STATE AUTOMATA
           </div>
           <div class="manual-lfn bot-manual-lfn">
-            MENGGUNAKAN <i>BACKWARD CHAINING</i>
+            PADA PROSES PENDAFTARAN KURSUS </i>
           </div>
         </div>
       </div>
 
-      <a href="/" class="link wfc">
-        <button class="rsb-menu hovered_bcolor">Daftar Anak</button>
+      @foreach($quiz as $row)
+      <a href="/quiz/{{ $row->id_quiz }}" class="link wfc">
+        <button class="rsb-menu">{{ $row->nama_quiz }}</button>
+      </a>
+      @endforeach
+      <a href="/sertifikat" class="link wfc">
+        <button class="rsb-menu">Sertifikat</button>
       </a>
     </div>
     <section id="wrapper" class="wrapper home">
@@ -36,72 +41,59 @@
         </div>
 
         <hr>
-        
-        <form method="POST" action="{{ url('tambah_anak') }}">
-          @csrf
-          <table style="width:100%;">
-            <tr>
-                <td>
-                  <label>Nama</label>
-                  <input type="text" name="nama" placeholder="contoh agung widjaya" value="{{ old('nama') }}">
-                  <span class="error">{{ $errors->first('nama') }}</span>
-                </td>
-                <td>
-                  <label>Jenis Kelamin</label>
-                  <select name="jenis_kelamin">
-                    <option value="">Pilih Jenis Kelamin</option>
-                    <option value="l" {{ old('jenis_kelamin') === 'l' ? 'selected' : '' }}>Laki - Laki</option>
-                    <option value="p" {{ old('jenis_kelamin') === 'p' ? 'selected' : '' }}>Perempuan</option>
-                  </select>
-                  <span class="error">{{ $errors->first('jenis_kelamin') }}</span>
-                </td>
-                <td>
-                  <input type="submit" value="Tambah Anak">
-                </td>
-            </tr>
-          </table>
-        </form>
 
-        <hr>
-
-        @if(session()->has('success'))
-          <h3 class="success">{{ session('success') }}</h3>
-        @elseif(session()->has('error'))
-          <h3 class="error">{{ session('error') }}</h3>
-        @endif
+        <h2>SELAMAT DATANG</h2>
 
         <table border="1" style="width:100%;">
           <tr>
-            <th colspan="6" style="background: grey; color: white;">Daftar Dataset</th>
+              <td>BAHASA INGGRIS</td>
+              <td>
+                @if($english == '')
+                <a href="/quiz/1" style="text-align:right;">
+                  AMBIL TEST
+                </a>
+                @else
+                  SUDAH DIAMBIL
+                @endif
+              </td>
           </tr>
           <tr>
-              <th>NO.</th>
-              <th>NAMA ANAK</th>
-              <th>JENIS KELAMIN</th>
-              <th>DIAGNOSA</th>
-              <th>ACTION</th>
+              <td>MATEMATIKA</td>
+              <td>
+                @if($matematika == '')
+                <a href="/quiz/2" style="text-align:right;">
+                  AMBIL TEST
+                </a>
+                @else
+                  SUDAH DIAMBIL
+                @endif
+              </td>
           </tr>
-          @foreach($dataset as $row)
-              <tr>
-                  <td>{{ $loop->iteration }}</td>
-                  <td>{{ $row->nama }}</td>
-                  <td>{{ $row->jenis_kelamin === 'l' ? 'Laki - Laki' : 'Perempuan' }}</td>
-                  <td>
-                    <?php if(!empty($row->code_diagnosa)) { ?>
-                      <ol>
-                          @foreach(explode('| ', rtrim($row->nama_diagnosa)) as $val)
-                              <li>{{ $val }}</li>
-                          @endforeach
-                      </ol>
-                    <?php } else { echo 'BELUM DIDIAGNOSA!'; } ?>
-                  <td>
-                    <a href="{{ url('hasil_diagnosa/'.$row->id_anak) }}">Lihat Hasil Diagnosa</a><hr>
-                    <a href="{{ url('diagnosa/'.$row->id_anak) }}">Diagnosa</a><hr>
-                    <a href="{{ url('hapus_anak/'.$row->id_anak) }}">Hapus data</a>
-                  </td>
-              </tr>
-          @endforeach
-      </table>
+          <tr>
+              <td>BAHASA INDONESIA</td>
+              <td>
+                @if($bahasa == '')
+                <a href="/quiz/3" style="text-align:right;">
+                  AMBIL TEST
+                </a>
+                @else
+                  SUDAH DIAMBIL
+                @endif
+              </td>
+          </tr>
+          <tr>
+              <td>IPA</td>
+              <td>
+                @if($ipa == '')
+                <a href="/quiz/4" style="text-align:right;">
+                  AMBIL TEST
+                </a>
+                @else
+                  SUDAH DIAMBIL
+                @endif
+              </td>
+          </tr>
+        </table>
 
       </div>
     </section>
